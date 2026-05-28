@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        @media (max-width:360px) {
+            .empty { display: block; }
+            .vertical, .horizontal { display: none; }
+        }
+
+        @media (min-width:361px) and (max-width:540px) {
+            .empty { display: none; }
+            .vertical { display: block; }
+            .horizontal { display: none; }
+        }
+
+        @media (min-width:541px) {
+            .empty { display: none; }
+            .vertical { display: none; }
+            .horizontal { display: block; }
+        }
+
+        .display {
+            font-size: 40px;
+            padding: 10px 20px;
+            display: block;
+            text-align: right;
+            background-color: white;
+            border: 1px solid #ccc;
+            width: 100%;
+            height: 80px;
+            line-height: 60px;
+        }
+
+        table {
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 8px;
+            background-color: #f4f4f4;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        td { padding: 0; }
+
+        button {
+            width: 100%;
+            height: 60px;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #bdbdbd;
+            color: white;
+        }
+
+        .num-btn { background-color: white; }
+        .operator { background-color: #fcd357; }
+
+        .footer-text {
+            text-align: right;
+            font-size: 14px;
+            color: #555;
+            padding-top: 10px;
+            font-style: italic;
+        }
+
+        .vertical table { width: 360px; }
+        .horizontal table { width: 650px; }
+    </style>
+</head>
+
+<body>
+    <div class="empty">
+        <p>표시할 수 없음.</p>
+    </div>
+
+    <div class="vertical">
+        <table>
+            <tr><td colspan="4"><span class="display">0</span></td></tr>
+            <tr>
+                <td><button class="clean">CE</button></td>
+                <td><button class="sqrt">√</button></td>
+                <td><button class="operator">%</button></td>
+                <td><button class="operator">÷</button></td>
+            </tr>
+            <tr>
+                <td><button class="num-btn">7</button></td>
+                <td><button class="num-btn">8</button></td>
+                <td><button class="num-btn">9</button></td>
+                <td><button class="operator">x</button></td>
+            </tr>
+            <tr>
+                <td><button class="num-btn">4</button></td>
+                <td><button class="num-btn">5</button></td>
+                <td><button class="num-btn">6</button></td>
+                <td><button class="operator">-</button></td>
+            </tr>
+            <tr>
+                <td><button class="num-btn">1</button></td>
+                <td><button class="num-btn">2</button></td>
+                <td><button class="num-btn">3</button></td>
+                <td><button class="operator">+</button></td>
+            </tr>
+            <tr>
+                <td><button class="num-btn">0</button></td>
+                <td><button class="num-btn">.</button></td>
+                <td><button class="sign">+/-</button></td>
+                <td><button class="equal">=</button></td>
+            </tr>
+            <tr><td colspan="4" class="footer-text">20253319 장하영</td></tr>
+        </table>
+    </div>
+
+    <div class="horizontal">
+        <table>
+            <tr><td colspan="7"><span class="display">0</span></td></tr>
+            <tr>
+                <td><button class="back">←</button></td>
+                <td><button class="all-clear">C</button></td>
+                <td><button class="num-btn">7</button></td>
+                <td><button class="num-btn">8</button></td>
+                <td><button class="num-btn">9</button></td>
+                <td><button class="operator">÷</button></td>
+                <td><button id="r2">R2</button></td>
+            </tr>
+            <tr>
+                <td><button class="inverse">1/x</button></td>
+                <td><button class="abs">abs</button></td>
+                <td><button class="num-btn">4</button></td>
+                <td><button class="num-btn">5</button></td>
+                <td><button class="num-btn">6</button></td>
+                <td><button class="operator">x</button></td>
+                <td><button class="clean">R0</button></td>
+            </tr>
+            <tr>
+                <td><button id="pie">π</button></td>
+                <td><button class="pow">x²</button></td>
+                <td><button class="num-btn">1</button></td>
+                <td><button class="num-btn">2</button></td>
+                <td><button class="num-btn">3</button></td>
+                <td><button class="operator">-</button></td>
+                <td><button class="clean">CE</button></td>
+            </tr>
+            <tr>
+                <td><button class="sqrt">√x</button></td>
+                <td><button class="operator">%</button></td>
+                <td><button class="num-btn">0</button></td>
+                <td><button class="num-btn">.</button></td>
+                <td><button class="sign">+/-</button></td>
+                <td><button class="operator">+</button></td>
+                <td><button class="equal">=</button></td>
+            </tr>
+            <tr><td colspan="7" class="footer-text">20253319 장하영</td></tr>
+        </table>
+    </div>
+
+    <script>
+        let firstValue = "";
+        let operator = "";
+        let secondValue = "";
+        let lastResult = "";
+
+        const displays = document.querySelectorAll('.display');
+        const numButtons = document.querySelectorAll('.num-btn');
+        const operators = document.querySelectorAll('.operator');
+        const equalBtns = document.querySelectorAll('.equal');
+        const sqrtBtns = document.querySelectorAll('.sqrt');
+        const powBtns = document.querySelectorAll('.pow');
+        const cleanBtns = document.querySelectorAll('.clean');
+        const signBtns = document.querySelectorAll('.sign');
+        const backBtns = document.querySelectorAll('.back');
+        const allClearBtns = document.querySelectorAll('.all-clear');
+        const inverseBtns = document.querySelectorAll('.inverse');
+        const absBtns = document.querySelectorAll('.abs');
+
+        const r2 = document.getElementById('r2');
+        const pie = document.getElementById('pie');
+
+        numButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.innerText;
+
+                displays.forEach(display => {
+                    if (value === '.' && display.innerText.includes('.')) return;
+
+                    if (display.innerText === '0' && value !== '.') {
+                        display.innerText = value;
+                    } else {
+                        display.innerText += value;
+                    }
+                });
+            });
+        });
+
+        operators.forEach(op => {
+            op.addEventListener('click', () => {
+                firstValue = displays[0].innerText;
+                operator = op.innerText;
+
+                displays.forEach(display => display.innerText = "0");
+            });
+        });
+
+        equalBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                secondValue = displays[0].innerText;
+                let result = 0;
+
+                if (operator === '+') result = Number(firstValue) + Number(secondValue);
+                else if (operator === '-') result = Number(firstValue) - Number(secondValue);
+                else if (operator === 'x') result = Number(firstValue) * Number(secondValue);
+                else if (operator === '÷') result = Number(firstValue) / Number(secondValue);
+                else if (operator === '%') result = Number(firstValue) % Number(secondValue);
+                else result = Number(secondValue);
+
+                displays.forEach(display => display.innerText = result);
+
+                lastResult = result;
+                firstValue = result;
+                secondValue = "";
+                operator = "";
+            });
+        });
+
+        sqrtBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                let result = Math.sqrt(Number(displays[0].innerText));
+                displays.forEach(display => display.innerText = result);
+                lastResult = result;
+            });
+        });
+
+        powBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                let value = Number(displays[0].innerText);
+                let result = Math.pow(value, 2);
+                displays.forEach(display => display.innerText = result);
+                lastResult = result;
+            });
+        });
+
+        cleanBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                displays.forEach(display => display.innerText = "0");
+                firstValue = "";
+                secondValue = "";
+                operator = "";
+            });
+        });
+
+        allClearBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                displays.forEach(display => display.innerText = "0");
+                firstValue = "";
+                secondValue = "";
+                operator = "";
+                lastResult = "";
+            });
+        });
+
+        backBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                displays.forEach(display => {
+                    if (display.innerText.length <= 1 || 
+                        (display.innerText.length === 2 && display.innerText.startsWith('-'))) {
+                        display.innerText = "0";
+                    } else {
+                        display.innerText = display.innerText.slice(0, -1);
+                    }
+                });
+            });
+        });
+
+        inverseBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                let value = Number(displays[0].innerText);
+                let result = 1 / value;
+                displays.forEach(display => display.innerText = result);
+                lastResult = result;
+            });
+        });
+
+        absBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                let result = Math.abs(Number(displays[0].innerText));
+                displays.forEach(display => display.innerText = result);
+                lastResult = result;
+            });
+        });
+
+        signBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                displays.forEach(display => {
+                    let value = Number(display.innerText);
+                    display.innerText = value * -1;
+                });
+            });
+        });
+
+        r2.addEventListener('click', () => {
+            if (lastResult === "") return;
+            displays.forEach(display => display.innerText = lastResult);
+        });
+
+        pie.addEventListener('click', () => {
+            displays.forEach(display => display.innerText = Math.PI);
+            lastResult = Math.PI;
+        });
+    </script>
+</body>
+
+</html>
